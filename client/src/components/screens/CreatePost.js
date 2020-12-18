@@ -9,6 +9,7 @@ const CreatePost = ()=>{
     const [image,setImage] = useState("")
     const [url,setUrl] = useState("")
 
+    // wait for url from cloudinary request
     useEffect(()=>{
         if(url){
             // request to our server for creating the post
