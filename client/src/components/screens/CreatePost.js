@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState, useEffect} from 'react'
 import {Link, useHistory} from 'react-router-dom'
 import M from 'materialize-css'
 
@@ -9,11 +9,41 @@ const CreatePost = ()=>{
     const [image,setImage] = useState("")
     const [url,setUrl] = useState("")
 
+    useEffect(()=>{
+        if(url){
+            // request to our server for creating the post
+            fetch("/createpost",{
+                method:"post",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":"Bearer "+localStorage.getItem("jwt")
+                },
+                body:JSON.stringify({
+                    title,
+                    body,
+                    pic:url
+                })
+            }).then(res=>res.json())
+            .then(data=>{
+                if(data.error){
+                    M.toast({html: data.error, classes:"#c62828 red darken-3"})
+                
+                }else{
+                    M.toast({html:"Created Post successfully!", classes:"#43a047 green darken-1"})
+                    history.push("/")
+                }
+            }).catch(err=>{
+                console.log(err)
+            })
+        }
+    },[url])
+
     const postDetails = ()=>{
         const data = new FormData()
         data.append("file",image)
         data.append("upload_preset","insta-clone")
         data.append("cloud_name", "thegram")
+
         // request to cloudinary
         fetch("https://api.cloudinary.com/v1_1/thegram/image/upload",{
             method:"post",
@@ -24,30 +54,6 @@ const CreatePost = ()=>{
             setUrl(data.url)
         })
         .catch(err=>{
-            console.log(err)
-        })
-
-        // request to our server for creating the post
-        fetch("/createpost",{
-            method:"post",
-            headers:{
-                "Content-Type":"application/json",
-            },
-            body:JSON.stringify({
-                title,
-                body,
-                pic: url
-            })
-        }).then(res=>res.json())
-        .then(data=>{
-            if(data.error){
-                M.toast({html: data.error, classes:"#c62828 red darken-3"})
-            
-            }else{
-                M.toast({html:"Created Post successfully!", classes:"#43a047 green darken-1"})
-                history.push("/")
-            }
-        }).catch(err=>{
             console.log(err)
         })
         
@@ -69,7 +75,7 @@ const CreatePost = ()=>{
                 <div className="btn #64b5f6 blue darken-1">
                     <span>Upload Image</span>
                     <input type="file" 
-                    onChange={(e)=>setImage(e.target.files)}
+                    onChange={(e)=>setImage(e.target.files[0])}
                     />
                 </div>
                 <div className="file-path-wrapper">
