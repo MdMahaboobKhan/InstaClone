@@ -72,7 +72,7 @@ const CreatePost = ()=>{
             value = {body}
             onChange = {(e)=>setBody(e.target.value)}
             />
-            <div class="file-field input-field">
+            <div className="file-field input-field">
                 <div className="btn #64b5f6 blue darken-1">
                     <span>Upload Image</span>
                     <input type="file" 

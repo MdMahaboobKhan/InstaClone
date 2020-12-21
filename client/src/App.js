@@ -20,7 +20,6 @@ const Routing =()=>{
     if(user){
       // if user closes and reopens site
       dispatch({type:"USER",payload:user})
-      history.push("/")
     }else{
       history.push("/signin")
     }
